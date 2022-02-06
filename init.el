@@ -887,13 +887,40 @@
   :delight)
 
 (use-package ewal-spacemacs-themes
-;;  :disabled t
   :ensure t
   :config
   (setq-default spacemacs-theme-comment-bg nil
                 spacemacs-theme-comment-italic t)
-  (load-theme 'spacemacs-light t)
+  ;;(load-theme 'spacemacs-light t)
+  ;;(load-theme 'spacemacs-dark t)
   :delight)
+
+(use-package one-themes
+  :disabled t
+  :ensure t
+  :config
+  (load-theme 'one-dark t)
+  )
+
+
+(use-package darcula-theme
+  :disabled t
+  :ensure t
+  :config
+  ;;(load-theme 'darcula t)
+  )
+
+(use-package ewal-doom-themes
+  :ensure t
+  :config
+  ;;(load-theme 'doom-nord t)
+  ;;(load-theme 'doom-solarized-light t)
+  ;;(load-theme 'doom-solarized-dark t)
+  ;;(load-theme 'doom-material t)
+  (load-theme 'doom-dracula t)
+  ;;(load-theme 'doom-vibrant)
+  ;;(load-theme 'doom-one t)
+  )
 
 (use-package nord-theme
   :disabled t
