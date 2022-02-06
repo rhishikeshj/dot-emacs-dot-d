@@ -601,7 +601,6 @@
 
 (use-package rainbow-delimiters
   :doc "Colorful paranthesis matching"
-  :disabled t ;; This is not really needed when you use paredit
   :ensure t
   :config
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
