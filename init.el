@@ -634,6 +634,9 @@
 
 
 ;; ──────────────────────────────── Programming languages ───────────────────────────────
+
+(load-file "~/.emacs.d/elpa/cljstyle-mode.el")
+
 (use-package clojure-mode
   :doc "A major mode for editing Clojure code"
   :ensure t
@@ -651,6 +654,7 @@
                       nil))))))
   (add-hook 'clojure-mode-hook 'prettify-fns)
   (add-hook 'cider-repl-mode-hook 'prettify-fns)
+  (add-hook 'clojure-mode-hook #'cljstyle-mode)
 
   ;; Show lambda instead of '#' in '#(...)'
   (defun prettify-anonymous-fns ()
@@ -712,7 +716,7 @@
   ;; REPL should expect input on the next line + unnecessary palm trees!
   (defun cider-repl-prompt-custom (namespace)
     "Return a prompt string that mentions NAMESPACE."
-    (format "🌴 %s 🌴 \n" namespace))
+    (format "λ %s λ\n" namespace))
 
   (setq cider-repl-prompt-function 'cider-repl-prompt-custom)
 
