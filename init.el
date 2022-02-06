@@ -90,9 +90,7 @@
 
 ;; `C-x o' is a 2 step key binding. `M-o' is much easier.
 (global-set-key (kbd "M-o") 'other-window)
-
-;; Unbind `save-buffers-kill-terminal` to avoid accidentally quiting Emacs.
-(global-unset-key (kbd "C-x C-c"))
+(global-set-key (kbd "C-x C-c") 'save-buffers-kill-emacs)
 
 ;; Delete whitespace just when a file is saved.
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
