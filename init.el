@@ -273,6 +273,19 @@
   :bind ("C-x g" . magit-status)
   :delight)
 
+(use-package git-gutter
+  :doc "Shows modified lines"
+  :ensure t
+  :config
+  (setq git-gutter:modified-sign "|")
+  (setq git-gutter:added-sign "|")
+  (setq git-gutter:deleted-sign "|")
+  (set-face-foreground 'git-gutter:modified "grey")
+  (set-face-foreground 'git-gutter:added "green")
+  (set-face-foreground 'git-gutter:deleted "red")
+  (global-git-gutter-mode t)
+  :delight)
+
 (use-package ace-jump-mode
   :doc "Jump around the visible buffer using 'Head Chars'"
   :ensure t
