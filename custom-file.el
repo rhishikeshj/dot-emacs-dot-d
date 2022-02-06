@@ -14,7 +14,7 @@
                    (org-agenda-overriding-header "Habits"))))
       nil nil)))
  '(package-selected-packages
-   '(darkroom markdown-mode org-super-agenda org-bullets powerline use-package)))
+   '(rainbow-delimiters helm-cider-history treemacs-persp treemacs-magit treemacs-icons-dired treemacs-projectile treemacs-evil alchemist treemacs docker golden-ratio ag ewal-doom-themes darcula-theme one-themes git-gutter fira-code-mode hasklig-mode darkroom markdown-mode org-super-agenda org-bullets powerline use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
