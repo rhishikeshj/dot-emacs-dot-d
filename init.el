@@ -119,9 +119,6 @@
   (when (fboundp 'scroll-bar-mode)
     (scroll-bar-mode -1))
 
-  ;; Highlight line on point.
-  (global-hl-line-mode t))
-
 
 ;; ───────────────────────── Better interaction with X clipboard ────────────────────────
 (setq-default
@@ -542,8 +539,6 @@
 
 
 ;; ───────────────────────────────────── Code editing ─────────────────────────────────────
-
-(global-display-line-numbers-mode)
 
 (use-package company
   :doc "COMplete ANYthing"
