@@ -119,6 +119,9 @@
   (when (fboundp 'scroll-bar-mode)
     (scroll-bar-mode -1))
 
+  ;; Highlight line on point.
+  (global-hl-line-mode -1))
+
 
 ;; ───────────────────────── Better interaction with X clipboard ────────────────────────
 (setq-default
@@ -296,6 +299,9 @@
   :doc "Dumb ag version of M-."
   :ensure t
   :bind ("C-M-." . dumb-jump-go)
+  :config
+  (setq dumb-jump-default-project "~/workspace")
+  (setq dumb-jump-prefer-searcher 'ag)
   :delight)
 
 (use-package which-key
@@ -369,13 +375,6 @@
   ;; Due to a bug in macOS, changing ivy-posframe-border background color does not
   ;; work. Instead, go to the elisp file and change the background color to black.
 
-  :delight)
-
-(use-package swiper
-  :doc "A better search"
-  :ensure t
-  :bind (("C-s" . swiper-isearch)
-         ("H-s" . isearch-forward-regexp))
   :delight)
 
 (use-package swiper
@@ -821,18 +820,6 @@
                     (lambda () (add-to-list 'company-backends 'company-anaconda)))
   :delight)
 
-(use-package haskell-mode
-  :ensure t
-  :config
-  :bind (("C-c M-o" . haskell-interactive-mode-clear)
-         ("C-c C-z" . haskell-interactive-switch)))
-
-(use-package lsp-haskell
-  :config
-  (add-hook 'haskell-mode-hook #'lsp)
-  (add-hook 'haskell-literate-mode-hook #'lsp)
-  :delight)
-
 
 ;; ──────────────────────────────────── Look and feel ───────────────────────────────────
 (use-package monokai-alt-theme
@@ -892,19 +879,17 @@
   (setq-default spacemacs-theme-comment-bg nil
                 spacemacs-theme-comment-italic t)
   ;;(load-theme 'spacemacs-light t)
-  ;;(load-theme 'spacemacs-dark t)
+  (load-theme 'spacemacs-dark t)
   :delight)
 
 (use-package one-themes
-  :disabled t
   :ensure t
   :config
-  (load-theme 'one-dark t)
+  ;;(load-theme 'one-dark t)
   )
 
 
 (use-package darcula-theme
-  :disabled t
   :ensure t
   :config
   ;;(load-theme 'darcula t)
@@ -917,7 +902,7 @@
   ;;(load-theme 'doom-solarized-light t)
   ;;(load-theme 'doom-solarized-dark t)
   ;;(load-theme 'doom-material t)
-  (load-theme 'doom-dracula t)
+  ;;(load-theme 'doom-dracula t)
   ;;(load-theme 'doom-vibrant)
   ;;(load-theme 'doom-one t)
   )
@@ -951,44 +936,48 @@
 
 (use-package hasklig-mode
   :ensure t
-;;  :disabled f
+  :disabled t
   :config
   (set-face-attribute 'default nil
                       :family "Hasklig"
-                      :height 150
+                      :height 160
                       :weight 'normal
                       :width 'normal)
   (hasklig-mode)
   :delight)
 
-;; Use ligatures with JetBrains Mono
-;;(set-frame-font "JetBrains Mono 15" nil t)
-;; (let ((alist '((?! . "\\(?:!\\(?:==\\|[!=]\\)\\)")
-;;                (?# . "\\(?:#\\(?:###?\\|_(\\|[!#(:=?[_{]\\)\\)")
-;;                (?$ . "\\(?:\\$>\\)")
-;;                (?& . "\\(?:&&&?\\)")
-;;                (?* . "\\(?:\\*\\(?:\\*\\*\\|[/>]\\)\\)")
-;;                (?+ . "\\(?:\\+\\(?:\\+\\+\\|[+>]\\)\\)")
-;;                (?- . "\\(?:-\\(?:-[>-]\\|<<\\|>>\\|[<>|~-]\\)\\)")
-;;                (?. . "\\(?:\\.\\(?:\\.[.<]\\|[.=?-]\\)\\)")
-;;                (?/ . "\\(?:/\\(?:\\*\\*\\|//\\|==\\|[*/=>]\\)\\)")
-;;                (?: . "\\(?::\\(?:::\\|\\?>\\|[:<-?]\\)\\)")
-;;                (?\; . "\\(?:;;\\)")
-;;                (?< . "\\(?:<\\(?:!--\\|\\$>\\|\\*>\\|\\+>\\|-[<>|]\\|/>\\|<[<=-]\\|=\\(?:=>\\|[<=>|]\\)\\||\\(?:||::=\\|[>|]\\)\\|~[>~]\\|[$*+/:<=>|~-]\\)\\)")
-;;                (?= . "\\(?:=\\(?:!=\\|/=\\|:=\\|=[=>]\\|>>\\|[=>]\\)\\)")
-;;                (?> . "\\(?:>\\(?:=>\\|>[=>-]\\|[]:=-]\\)\\)")
-;;                (?? . "\\(?:\\?[.:=?]\\)")
-;;                (?\[ . "\\(?:\\[\\(?:||]\\|[<|]\\)\\)")
-;;                (?\ . "\\(?:\\\\/?\\)")
-;;                (?\] . "\\(?:]#\\)")
-;;                (?^ . "\\(?:\\^=\\)")
-;;                (?_ . "\\(?:_\\(?:|?_\\)\\)")
-;;                (?{ . "\\(?:{|\\)")
-;;                (?| . "\\(?:|\\(?:->\\|=>\\||\\(?:|>\\|[=>-]\\)\\|[]=>|}-]\\)\\)")
-;;                (?~ . "\\(?:~\\(?:~>\\|[=>@~-]\\)\\)"))))
-;;   (dolist (char-regexp alist)
-;;     (set-char-table-range composition-function-table (car char-regexp)
-;;                           `([,(cdr char-regexp) 0 font-shape-gstring]))))
+;;Use ligatures with JetBrains Mono
+(set-face-attribute 'default nil
+                      :family "JetBrains Mono"
+                      :height 145
+                      :weight 'normal
+                      :width 'normal)
+(let ((alist '((?! . "\\(?:!\\(?:==\\|[!=]\\)\\)")
+               (?# . "\\(?:#\\(?:###?\\|_(\\|[!#(:=?[_{]\\)\\)")
+               (?$ . "\\(?:\\$>\\)")
+               (?& . "\\(?:&&&?\\)")
+               (?* . "\\(?:\\*\\(?:\\*\\*\\|[/>]\\)\\)")
+               (?+ . "\\(?:\\+\\(?:\\+\\+\\|[+>]\\)\\)")
+               (?- . "\\(?:-\\(?:-[>-]\\|<<\\|>>\\|[<>|~-]\\)\\)")
+               (?. . "\\(?:\\.\\(?:\\.[.<]\\|[.=?-]\\)\\)")
+               (?/ . "\\(?:/\\(?:\\*\\*\\|//\\|==\\|[*/=>]\\)\\)")
+               (?: . "\\(?::\\(?:::\\|\\?>\\|[:<-?]\\)\\)")
+               (?\; . "\\(?:;;\\)")
+               (?< . "\\(?:<\\(?:!--\\|\\$>\\|\\*>\\|\\+>\\|-[<>|]\\|/>\\|<[<=-]\\|=\\(?:=>\\|[<=>|]\\)\\||\\(?:||::=\\|[>|]\\)\\|~[>~]\\|[$*+/:<=>|~-]\\)\\)")
+               (?= . "\\(?:=\\(?:!=\\|/=\\|:=\\|=[=>]\\|>>\\|[=>]\\)\\)")
+               (?> . "\\(?:>\\(?:=>\\|>[=>-]\\|[]:=-]\\)\\)")
+               (?? . "\\(?:\\?[.:=?]\\)")
+               (?\[ . "\\(?:\\[\\(?:||]\\|[<|]\\)\\)")
+               (?\ . "\\(?:\\\\/?\\)")
+               (?\] . "\\(?:]#\\)")
+               (?^ . "\\(?:\\^=\\)")
+               (?_ . "\\(?:_\\(?:|?_\\)\\)")
+               (?{ . "\\(?:{|\\)")
+               (?| . "\\(?:|\\(?:->\\|=>\\||\\(?:|>\\|[=>-]\\)\\|[]=>|}-]\\)\\)")
+               (?~ . "\\(?:~\\(?:~>\\|[=>@~-]\\)\\)"))))
+  (dolist (char-regexp alist)
+    (set-char-table-range composition-function-table (car char-regexp)
+                          `([,(cdr char-regexp) 0 font-shape-gstring]))))
 
 ;; Elixir utils
 (unless (package-installed-p 'alchemist)
@@ -1017,6 +1006,8 @@
 (use-package docker
   :ensure t
   :bind ("C-c D" . docker))
+
+(use-package docker-compose-mode)
 
 (use-package treemacs
   :ensure t
@@ -1114,6 +1105,13 @@
   :ensure t
   :config (treemacs-set-scope-type 'Perspectives))
 
+(load-file "~/.emacs.d/load-env-vars.el")
+
+(use-package yaml-mode
+  :ensure t)
+
 (provide 'init)
 
+;; ------------------------------------ ORG ------------------------------------
+(load-file "~/.emacs.d/org-config.el")
 ;;; init.el ends here
