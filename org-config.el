@@ -21,11 +21,10 @@
 
 ;; ─────────────────────────────────────── *ORG* ──────────────────────────────────────
 (use-package org
-  :if (or (equal user-login-name "suvratapte")
-          (equal user-login-name "suvrat.apte"))
+  :if (or (equal user-login-name "rhishikesh")
+          (equal user-login-name "rhishikeshj")
+          (equal user-login-name "rhi"))
   :config
-
-  (setq suv-org-env (if (equal user-login-name "suvratapte") 'home 'klarna))
 
   ;; Enable spell check in org
   (add-hook 'org-mode-hook 'turn-on-flyspell)
@@ -41,7 +40,7 @@
    ;; '!' after the hotkey tells org-mode to add a LOGBOOK entry for every
    ;; status change.
    org-todo-keywords '((sequence
-                        "TODO(t)" "WORKING(w)" "WAITING(W)"
+                        "TODO(t)" "WORKING(w!)" "PAUSED(p!)" "WAITING(W!)"
                         "|" "DONE(d!)"))
 
    ;; Use logbook
@@ -72,12 +71,14 @@
 
    org-todo-keyword-faces-spacemacs-theme
    '(("TODO" :foreground "red" :weight bold)
+     ("PAUSED" :foreground "red" :weight bold)
      ("WORKING" :foreground "#a45bad" :weight bold)
      ("WAITING" :foreground "cyan1" :weight bold)
      ("DONE" :foreground "#2d9574" :weight bold))
 
    org-todo-keyword-faces-nord-theme
    '(("TODO" :foreground "#bf616a" :weight bold)
+     ("PAUSED" :foreground "#bf616a" :weight bold)
      ("WORKING" :foreground "#b48ead" :weight bold)
      ("WAITING" :foreground "#ebcb8b" :weight bold)
      ("DONE" :foreground "#a3be8c" :weight bold))
@@ -103,11 +104,7 @@
    '(("i" "My Agenda"
       ((agenda ""
                ((org-agenda-overriding-header "Agenda\n")
-                (org-agenda-span 3)))
-
-       (tags-todo "STYLE=\"habit\""
-                  ((org-agenda-files (list org-habits-file))
-                   (org-agenda-overriding-header "Habits\n"))))
+                (org-agenda-span 3))))
       nil nil))
 
    org-agenda-block-separator
@@ -116,54 +113,42 @@
     'face '(:foreground "#81a1c1"))
 
    ;; Capture directories
-   org-directory "~/workspace/repository-of-things"
+   org-directory "~/workspace/notes"
    org-personal-directory (concat org-directory "/personal")
-   org-work-directory (concat org-directory "/work")
+   org-work-directory (concat org-directory "/work/juxt")
 
    ;; Capture files
    org-reading-list-file (concat org-personal-directory "/reading-list.org")
    org-oncall-file (concat org-work-directory "/oncall.org")
+   org-daily-journal-file (concat org-work-directory "/journal.org")
    org-meeting-notes-file (concat org-work-directory "/meeting-notes.org")
-   org-hscore-file (concat org-work-directory "/hscore.org")
    org-personal-todo-file (concat org-personal-directory "/todo.org")
-   org-habits-file (concat org-personal-directory "/habits.org")
+   org-work-todo-file (concat org-work-directory "/todo.org")
    org-til-file (concat org-personal-directory "/til.org")
+   org-learn-file (concat org-personal-directory "/learn.org")
    org-facts-file (concat org-personal-directory "/facts.org")
 
    org-capture-templates
    '(("r" "Reading list item" entry (file org-reading-list-file)
       "* TODO %^{Description}\n  :LOGBOOK:\n  - Added: %U\n  :END:\n  %?")
-     ("o" "Oncall ticket" entry (file org-oncall-file)
-      "* TODO %^{Type|HSBUG|AUTO|ONCALL}-%^{Ticket number} - %^{Description}
-  :PROPERTIES:
-  :LINK:     https://helpshift.atlassian.net/browse/%\\1-%\\2
-  :END:
-  :LOGBOOK:\n  - Added - %U\n  :END:" :prepend t)
-     ("h" "HSCore task" entry (file org-hscore-file)
-      "* TODO %^{Type|HSC}-%^{Ticket number} - %^{Description}
-  :PROPERTIES:
-  :LINK:     https://helpshift.atlassian.net/browse/%\\1-%\\2
-  :END:
-  :LOGBOOK:\n  - Added - %U\n  :END:" :prepend t)
      ("m" "Meeting notes" entry (file org-meeting-notes-file)
-      "* TODO %^{Agenda}\n  - Attendees: %^{Attendees}, Suvrat
-  - Date: %U\n  - Notes:\n    + %?\n  - Action items [/]\n    + [ ] "
-      :clock-in t
-      :clock-resume t)
+      "* %^{Title}\n  - Attendees: %^{Attendees}
+  - Date: %U\n  - Notes:\n    + %?\n  - Action items [/]\n    + [ ] ")
+     ("d" "Daily Entry" entry (file org-daily-journal-file)
+      "* %t %^{Title}\n** Tags: %^g\n** Intentions:\n    + %? \n** Happenings:\n*** TODO \n** Action items [/]\n    + [ ] " :prepend t)
+     ("L" "To learn" entry (file org-learn-file)
+      "* TODO [#%^{Priority (1 highest, 5 lowest)}] %^{Title}\n** Tags: %^g\n** Notes:\n    + %?")
      ("t" "Personal todo item" entry (file org-personal-todo-file)
       "* TODO %^{Description}%?\n  :LOGBOOK:\n  - Added: %U\n  :END:")
+     ("w" "Work todo item" entry (file org-work-todo-file)
+      "* TODO [#%^{Priority (1 highest, 5 lowest)}] %^{Description}%?\n  :LOGBOOK:\n  - Added: %U\n  :END:")
      ("l" "Today I learnt" entry (file org-til-file)
       "* %^{Description}\n  - Source: %?\n  -")
      ("f" "Facts" entry (file org-facts-file)
       "* %^{Fact}\n"))
 
-   org-agenda-files (list org-oncall-file
-                          ;; Excluding the reading list file since it has many TODOs.
-                          ;; org-reading-list-file
-                          org-meeting-notes-file
-                          org-hscore-file
-                          org-personal-todo-file
-                          org-habits-file)
+   org-agenda-files (list org-personal-todo-file
+                          org-learn-file)
 
    ;; Do not show clock in the modeline. It hides other important things.
    org-clock-clocked-in-display 'frame-title)
@@ -263,8 +248,8 @@ has no effect."
     (org-todo "WORKING"))
 
   (defadvice org-clock-out (after wicked activate)
-    "Set this task's status to 'WAITING'."
-    (org-todo "WAITING"))
+    "Set this task's status to 'PAUSED'."
+    (org-todo "PAUSED"))
 
   :bind (:map
          global-map
@@ -284,8 +269,7 @@ has no effect."
 
 
 (use-package org-bullets
-  :if (or (equal user-login-name "suvratapte")
-          (equal user-login-name "suvrat.apte"))
+  :if (equal user-login-name "rhishikeshj")
   :ensure t
   :config
   (add-hook 'org-mode-hook 'org-bullets-mode)
@@ -294,7 +278,7 @@ has no effect."
 
 
 (use-package org-super-agenda
-  :if (equal user-login-name "suvratapte")
+  :if (equal user-login-name "rhishikeshj")
   :ensure t
   :config
   ;; Configure this.
@@ -317,6 +301,9 @@ has no effect."
   ;; (org-super-agenda-mode t)
   )
 
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((clojure . t)))
 
 (provide 'org-config)
 
