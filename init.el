@@ -879,12 +879,13 @@
   (setq-default spacemacs-theme-comment-bg nil
                 spacemacs-theme-comment-italic t)
   ;;(load-theme 'spacemacs-light t)
-  (load-theme 'spacemacs-dark t)
+  ;;(load-theme 'spacemacs-dark t)
   :delight)
 
 (use-package one-themes
   :ensure t
   :config
+  (setq emacs-one-scale-org-headlines t)
   ;;(load-theme 'one-dark t)
   )
 
@@ -1108,6 +1109,12 @@
 (load-file "~/.emacs.d/load-env-vars.el")
 
 (use-package yaml-mode
+  :ensure t)
+
+(use-package adoc-mode
+  :ensure t)
+
+(use-package dockerfile-mode
   :ensure t)
 
 (provide 'init)

@@ -22,12 +22,14 @@
 ;; ─────────────────────────────────────── *ORG* ──────────────────────────────────────
 (use-package org
   :if (or (equal user-login-name "rhishikesh")
-          (equal user-login-name "rhishikeshj")
-          (equal user-login-name "rhi"))
+          (equal user-login-name "rhishikeshj"))
   :config
 
   ;; Enable spell check in org
   (add-hook 'org-mode-hook 'turn-on-flyspell)
+
+  ;;(add-hook 'org-mode-hook 'org-indent-mode)
+  (add-hook 'org-mode-hook 'visual-line-mode)
 
   (setq-default
    org-list-demote-modify-bullet '(("+" . "-") ("-" . "+"))
@@ -135,7 +137,7 @@
       "* %^{Title}\n  - Attendees: %^{Attendees}
   - Date: %U\n  - Notes:\n    + %?\n  - Action items [/]\n    + [ ] ")
      ("d" "Daily Entry" entry (file org-daily-journal-file)
-      "* %t %^{Title}\n** Tags: %^g\n** Intentions:\n    + %? \n** Happenings:\n*** TODO \n** Action items [/]\n    + [ ] " :prepend t)
+      "* %t %^{Title}\n** Tags: %^g\n** Intentions:\n    + %? \n** Happenings:\n*** TODO [#2]\n** Learnings:\n    + \n** Action items [/]\n    + [ ] " :prepend t)
      ("L" "To learn" entry (file org-learn-file)
       "* TODO [#%^{Priority (1 highest, 5 lowest)}] %^{Title}\n** Tags: %^g\n** Notes:\n    + %?")
      ("t" "Personal todo item" entry (file org-personal-todo-file)
