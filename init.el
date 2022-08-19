@@ -728,6 +728,25 @@
          ("C-c M-o" . cider-repl-clear-buffer))
   :delight)
 
+
+(use-package lsp-mode
+  :ensure t
+  :hook ((clojure-mode . lsp)
+         (clojurec-mode . lsp)
+         (clojurescript-mode . lsp))
+  :config
+  ;; add paths to your local installation of project mgmt tools, like lein
+  (setenv "PATH" (concat
+                   "/Users/rhishikeshj/workspace/tools/bin/" path-separator
+                   (getenv "PATH")))
+  (dolist (m '(clojure-mode
+               clojurec-mode
+               clojurescript-mode
+               clojurex-mode))
+     (add-to-list 'lsp-language-id-configuration `(,m . "clojure")))
+  (setq lsp-clojure-server-command '("/opt/homebrew/bin/clojure-lsp")))
+
+
 (use-package flycheck
   :ensure t
   :config
@@ -879,7 +898,7 @@
   (setq-default spacemacs-theme-comment-bg nil
                 spacemacs-theme-comment-italic t)
   ;;(load-theme 'spacemacs-light t)
-  ;;(load-theme 'spacemacs-dark t)
+  (load-theme 'spacemacs-dark t)
   :delight)
 
 (use-package one-themes
@@ -947,12 +966,13 @@
   (hasklig-mode)
   :delight)
 
-;;Use ligatures with JetBrains Mono
+
 (set-face-attribute 'default nil
-                      :family "JetBrains Mono"
-                      :height 145
+                      :family "Fantasque Sans Mono"
+                      :height 180
                       :weight 'normal
                       :width 'normal)
+
 (let ((alist '((?! . "\\(?:!\\(?:==\\|[!=]\\)\\)")
                (?# . "\\(?:#\\(?:###?\\|_(\\|[!#(:=?[_{]\\)\\)")
                (?$ . "\\(?:\\$>\\)")
@@ -1007,8 +1027,6 @@
 (use-package docker
   :ensure t
   :bind ("C-c D" . docker))
-
-(use-package docker-compose-mode)
 
 (use-package treemacs
   :ensure t
