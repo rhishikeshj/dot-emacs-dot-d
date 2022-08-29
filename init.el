@@ -898,7 +898,7 @@
   (setq-default spacemacs-theme-comment-bg nil
                 spacemacs-theme-comment-italic t)
   ;;(load-theme 'spacemacs-light t)
-  (load-theme 'spacemacs-dark t)
+  ;;(load-theme 'spacemacs-dark t)
   :delight)
 
 (use-package one-themes
@@ -918,24 +918,25 @@
 (use-package ewal-doom-themes
   :ensure t
   :config
+  (load-theme 'doom-dracula t)
+
+  ;; these hard-coded values are taken from (doom-color 'level1/2/3)
+  ;; and are only relevant for darcula
+  (custom-set-faces
+   '(org-level-1 ((t (:foreground "#ff79c6" :height 1.8))))
+   '(org-level-2 ((t (:foreground "#bd93f9" :height 1.4))))
+   '(org-level-3 ((t (:foreground "#d4b8fb" :height 1.2)))))
+
   ;;(load-theme 'doom-nord t)
   ;;(load-theme 'doom-solarized-light t)
   ;;(load-theme 'doom-solarized-dark t)
   ;;(load-theme 'doom-material t)
-  ;;(load-theme 'doom-dracula t)
+
   ;;(load-theme 'doom-vibrant)
   ;;(load-theme 'doom-one t)
+
   )
 
-(use-package nord-theme
-  :disabled t
-  :ensure t
-  :config
-  (load-theme 'nord t)
-
-  (set-face-attribute 'flycheck-error nil :underline '(:style line :color "#bf616a"))
-  (set-face-attribute 'flycheck-warning nil :underline '(:style line :color "#ebcb8b"))
-  :delight)
 
 (use-package powerline
   :doc "Better mode line"
@@ -969,7 +970,7 @@
 
 (set-face-attribute 'default nil
                       :family "Fantasque Sans Mono"
-                      :height 180
+                      :height 200
                       :weight 'normal
                       :width 'normal)
 
@@ -1134,6 +1135,8 @@
 
 (use-package dockerfile-mode
   :ensure t)
+
+(setq initial-buffer-choice "~/workspace/notes/personal/learn.org")
 
 (provide 'init)
 
