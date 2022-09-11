@@ -1,0 +1,17 @@
+* %^{Title}
+** Tags: %^g
+
+** Intentions:
+  + %?
+
+** Happenings:
+
+*** TODO [#2]
+
+** Learnings:
+
+  +
+
+** Action items [/]
+
+  + [ ]

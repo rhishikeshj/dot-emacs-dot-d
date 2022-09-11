@@ -1,0 +1,7 @@
+* TODO [#%^{Priority (1 highest, 5 lowest)}] %^{Title}
+
+** Tags: %^g
+
+** Notes:
+
+  + %?

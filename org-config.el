@@ -119,6 +119,8 @@
    org-personal-directory (concat org-directory "/personal")
    org-work-directory (concat org-directory "/work/juxt")
 
+   org-capture-templates-directory ("~/.emacs.d/org/templates/")
+
    ;; Capture files
    org-reading-list-file (concat org-personal-directory "/reading-list.org")
    org-oncall-file (concat org-work-directory "/oncall.org")
@@ -137,9 +139,9 @@
       "* %^{Title}\n  - Attendees: %^{Attendees}
   - Date: %U\n  - Notes:\n    + %?\n  - Action items [/]\n    + [ ] ")
      ("d" "Daily Entry" entry (file org-daily-journal-file)
-      "* %t %^{Title}\n** Tags: %^g\n** Intentions:\n    + %? \n** Happenings:\n*** TODO [#2]\n** Learnings:\n    + \n** Action items [/]\n    + [ ] " :prepend t)
+      (file "~/.emacs.d/org/templates/daily-entry.org") :prepend t)
      ("L" "To learn" entry (file org-learn-file)
-      "* TODO [#%^{Priority (1 highest, 5 lowest)}] %^{Title}\n** Tags: %^g\n** Notes:\n    + %?")
+      (file "~/.emacs.d/org/templates/learn.org"))
      ("t" "Personal todo item" entry (file org-personal-todo-file)
       "* TODO %^{Description}%?\n  :LOGBOOK:\n  - Added: %U\n  :END:")
      ("w" "Work todo item" entry (file org-work-todo-file)
@@ -306,6 +308,40 @@ has no effect."
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((clojure . t)))
+
+
+(use-package org-roam
+  :ensure t
+  :custom
+  (org-roam-directory "~/workspace/notes/roam-notes")
+  (org-roam-complete-everywhere)
+  (setq org-roam-capture-templates-directory (concat org-capture-templates-directory "/roam"))
+  (org-roam-capture-templates '(("d" "default" plain "* %?"
+                                 :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                                    "#+title: ${title}\n#+date: %U\n")
+                                 :unnarrowed t)
+                                ("r" "Reading list item"
+                                 plain
+                                 "* TODO %^{Description}\n  :LOGBOOK:\n  - Added: %U\n  :END:\n  %?"
+                                 :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                                    "#+title: ${title}\n")
+                                 :unnarrowed t)
+                                ("l" "Learn something new"
+                                 plain
+                                 (file "~/.emacs.d/org/templates/roam/learn.org")
+                                 :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                                    "#+title: ${title}\n")
+                                 :unnarrowed t)))
+
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n d" . org-roam-db-sync)
+         :map org-mode-map
+         ("C-M-i" . completion-at-point))
+
+  :config
+  (org-roam-db-autosync-enable))
 
 (provide 'org-config)
 
