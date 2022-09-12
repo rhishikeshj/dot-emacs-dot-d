@@ -119,7 +119,7 @@
    org-personal-directory (concat org-directory "/personal")
    org-work-directory (concat org-directory "/work/juxt")
 
-   org-capture-templates-directory ("~/.emacs.d/org/templates/")
+   org-capture-templates-directory "~/.emacs.d/org/templates/"
 
    ;; Capture files
    org-reading-list-file (concat org-personal-directory "/reading-list.org")
