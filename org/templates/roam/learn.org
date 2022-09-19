@@ -1,19 +1,18 @@
-
 * Tags
-  %^g
+ %^g
 
 * Goals
 
-  - %^{Goals}
+- %^{Goals}
 
 * References
 
-  %^{References}
+- %^{References}
 
 * Notes
 
-  %?
+- %?
 
 * Tasks
 
-  - [ ]
+- [ ]
