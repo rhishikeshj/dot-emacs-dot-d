@@ -343,6 +343,24 @@ has no effect."
   :config
   (org-roam-db-autosync-enable))
 
+
+(defun efs/presentation-start ()
+  "Set text scale on presentation start."
+  (setq-local text-scale-mode-amount 2)
+  (org-display-inline-images)
+  (text-scale-mode 1))
+
+(defun efs/presentation-end ()
+  "Reset text scale on presentation end."
+  (text-scale-mode 0))
+
+(use-package org-tree-slide
+  :hook ((org-tree-slide-play . efs/presentation-start)
+         (org-tree-slide-stop . efs/presentation-end))
+  :custom
+  (org-image-actual-width nil)
+  (org-tree-slide-breadcrumbs " -> "))
+
 (provide 'org-config)
 
 ;;; org-config.el ends here
