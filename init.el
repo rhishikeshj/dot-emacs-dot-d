@@ -910,8 +910,15 @@
   :config
   (setq emacs-one-scale-org-headlines t)
   ;;(load-theme 'one-dark t)
+  ;;(load-theme 'one-light t)
   )
 
+(use-package moe-theme
+  :ensure t
+  :config
+  ;;(load-theme 'moe-dark t)
+  ;;(load-theme 'moe-light t)
+  )
 
 (use-package darcula-theme
   :ensure t
@@ -922,14 +929,28 @@
 (use-package ewal-doom-themes
   :ensure t
   :config
-  (load-theme 'doom-dracula t)
+
+  ;; these hard-coded values are taken from the tokyo theme
+  ;; and are only relevant for tokyo-night
+  ;; (load-theme 'doom-tokyo-night t)
+  ;; (custom-set-faces
+  ;;  '(org-level-1 ((t (:foreground "#9aa5ce" :height 1.8))))
+  ;;  '(org-level-2 ((t (:foreground "#b4f9f8" :height 1.4))))
+  ;;  '(org-level-3 ((t (:foreground "#9ece6a" :height 1.2))))
+  ;;  '(org-tag ((t (:foreground "#cfc9c2" :height 0.8)))))
 
   ;; these hard-coded values are taken from (doom-color 'level1/2/3)
   ;; and are only relevant for darcula
+  ;;(load-theme 'doom-dracula t)
   (custom-set-faces
    '(org-level-1 ((t (:foreground "#ff79c6" :height 1.8))))
    '(org-level-2 ((t (:foreground "#bd93f9" :height 1.4))))
-   '(org-level-3 ((t (:foreground "#d4b8fb" :height 1.2)))))
+   '(org-level-3 ((t (:foreground "#d4b8fb" :height 1.2))))
+   '(org-tag ((t (:foreground "#cfc9c2" :height 0.8)))))
+
+  (load-theme 'doom-snazzy t)
+  ;;(load-theme 'doom-tomorrow-night t)
+  ;;(load-theme 'doom-spacegrey t)
 
   ;;(load-theme 'doom-nord t)
   ;;(load-theme 'doom-solarized-light t)
