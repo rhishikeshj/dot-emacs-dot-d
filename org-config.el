@@ -347,6 +347,7 @@ has no effect."
   :config
   (org-roam-db-autosync-enable))
 
+;; ─────────────────────────────── org-tree-slide ───────────────────────────────
 
 (defun efs/presentation-start ()
   "Set text scale on presentation start."
@@ -365,6 +366,15 @@ has no effect."
   (org-image-actual-width nil)
   (org-tree-slide-breadcrumbs " -> "))
 
+;; ──────────────────────────────── org-roam-ui ───────────────────────────────
+
+(use-package org-roam-ui
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
+
 ;; ────────────────────────────── org-babel-config ──────────────────────────────
 (use-package ob-clojurescript
   :custom
@@ -380,6 +390,8 @@ has no effect."
    (shell . t)))
 
 ;; ───────────────────────────── /org-babel-config ────────────────────────────
+
+
 (provide 'org-config)
 
 ;;; org-config.el ends here
