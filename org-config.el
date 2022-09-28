@@ -28,7 +28,7 @@
   ;; Enable spell check in org
   (add-hook 'org-mode-hook 'turn-on-flyspell)
 
-  ;;(add-hook 'org-mode-hook 'org-indent-mode)
+  (add-hook 'org-mode-hook 'org-indent-mode)
   (add-hook 'org-mode-hook 'visual-line-mode)
 
   (setq-default
@@ -152,10 +152,14 @@
       "* %^{Fact}\n"))
 
    org-agenda-files (list org-personal-todo-file
-                          org-learn-file)
+                          org-learn-file
+                          org-daily-journal-file)
 
    ;; Do not show clock in the modeline. It hides other important things.
-   org-clock-clocked-in-display 'frame-title)
+   org-clock-clocked-in-display 'frame-title
+   org-indent-mode t
+   ;;WARN: potentially hazardous
+   org-confirm-babel-evaluate nil)
 
   (defun custom-agenda-view ()
     "Show my custom agenda view."
@@ -361,6 +365,21 @@ has no effect."
   (org-image-actual-width nil)
   (org-tree-slide-breadcrumbs " -> "))
 
+;; ────────────────────────────── org-babel-config ──────────────────────────────
+(use-package ob-clojurescript
+  :custom
+  (setq org-babel-clojure-backend 'cider))
+
+(use-package ob-elixir)
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (elixir . t)
+   (clojure . t)
+   (shell . t)))
+
+;; ───────────────────────────── /org-babel-config ────────────────────────────
 (provide 'org-config)
 
 ;;; org-config.el ends here
