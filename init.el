@@ -104,6 +104,10 @@
 (global-set-key (kbd "H-w") 'widen)
 (global-set-key (kbd "H-c") 'calendar)
 
+(global-set-key (kbd "M-+") 'text-scale-increase)
+(global-set-key (kbd "M--") 'text-scale-decrease)
+(global-set-key (kbd "M-0") 'text-scale-adjust)
+
 ;; Automatically update buffers if file content on the disk has changed.
 (global-auto-revert-mode t)
 
@@ -969,10 +973,16 @@
 
 
 (set-face-attribute 'default nil
-                      :family "Fantasque Sans Mono"
-                      :height 200
-                      :weight 'normal
-                      :width 'normal)
+                    :family "Fantasque Sans Mono"
+                    ;;:family "JetBrains Mono"
+                    ;;:family "Fira Code"
+                    ;;:family "Ubuntu Mono"
+                    ;;:family "Hasklig"
+
+                    ;;:height 200 ;; monitor
+                    :height 180 ;; laptop
+                    :weight 'normal
+                    :width 'normal)
 
 (let ((alist '((?! . "\\(?:!\\(?:==\\|[!=]\\)\\)")
                (?# . "\\(?:#\\(?:###?\\|_(\\|[!#(:=?[_{]\\)\\)")
