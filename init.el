@@ -625,11 +625,14 @@
 
 (use-package yasnippet
   :ensure t
-  :disabled t ;; I'm not using this at the moment.
   :config
   (yas-global-mode t)
   (add-to-list 'hippie-expand-try-functions-list
                'yas-hippie-try-expand)
+  :delight)
+
+(use-package yasnippet-snippets
+  :ensure t
   :delight)
 
 (use-package expand-region
