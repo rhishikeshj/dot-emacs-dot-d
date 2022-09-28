@@ -1156,10 +1156,14 @@
   :ensure t
   :config (treemacs-set-scope-type 'Perspectives))
 
-(load-file "~/.emacs.d/load-env-vars.el")
-
 (use-package yaml-mode
   :ensure t)
+
+(use-package highlight-indentation
+  :ensure t
+  :init
+  (add-hook 'yaml-mode-hook #'highlight-indentation-current-column-mode)
+  (add-hook 'yaml-mode-hook #'highlight-indentation-mode))
 
 (use-package adoc-mode
   :ensure t)
@@ -1167,10 +1171,20 @@
 (use-package dockerfile-mode
   :ensure t)
 
-(setq initial-buffer-choice "~/workspace/notes/personal/learn.org")
+(use-package browse-kill-ring
+  :ensure t
+  :bind
+  (:map global-map
+        ("C-c M-k" . browse-kill-ring)))
+
+(load-file "~/.emacs.d/load-env-vars.el")
+
+(setq initial-buffer-choice "~/workspace/notes/personal/journal.org")
+
+;; ------------------------------------ ORG ------------------------------------
+
+(load-file "~/.emacs.d/org-config.el")
 
 (provide 'init)
 
-;; ------------------------------------ ORG ------------------------------------
-(load-file "~/.emacs.d/org-config.el")
 ;;; init.el ends here
