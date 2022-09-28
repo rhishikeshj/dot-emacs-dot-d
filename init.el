@@ -518,6 +518,11 @@
   :bind ("C-c d" . darkroom-mode)
   :delight)
 
+(use-package focus
+  :ensure t
+  :delight
+  :bind ("C-c f" . focus-mode))
+
 (use-package flyspell
   :config
   ;; Flyspell should be able to learn a word without the
