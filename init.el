@@ -73,6 +73,9 @@
  ;; Do not ring bell
  ring-bell-function 'ignore)
 
+;; Show (line,column) in mode-line
+(column-number-mode t)
+
 ;; Delete regions
 (cua-selection-mode t)
 
@@ -854,8 +857,6 @@
   ;; The cursor color in this theme is very confusing.
   ;; Change it to green
   (set-cursor-color "#9ce22e")
-  ;; Show (line,column) in mode-line
-  (column-number-mode t)
   ;; Customize theme
   (custom-theme-set-faces
    'user ;; `user' refers to user settings applied via Customize.

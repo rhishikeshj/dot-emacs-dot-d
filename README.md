@@ -30,6 +30,6 @@ Make sure that they are on $PATH. If you are on a Mac, ~git~ needs to be availab
 
 1. Close Emacs.
 2. Delete `~/.emacs` or `~/.emacs.d`, if you already have it.
-3. Run `git clone https://github.com/suvratapte/dot-emacs-dot-d.git ~/.emacs.d`
+3. Run `git clone https://github.com/rhishikeshj/dot-emacs-dot-d.git ~/.emacs.d`
 4. Open Emacs, it will download all the packages. (Ignore the warnings on the first launch.)
 5. Start using it! :tada:
