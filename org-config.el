@@ -42,8 +42,13 @@
    ;; '!' after the hotkey tells org-mode to add a LOGBOOK entry for every
    ;; status change.
    org-todo-keywords '((sequence
-                        "TODO(t)" "WORKING(w!)" "PAUSED(p!)" "WAITING(W!)"
-                        "|" "DONE(d!)"))
+                        "TODO(t)"
+                        "WORKING(w!)"
+                        "PAUSED(p!)"
+                        "WAITING(W!)"
+                        "|"
+                        "CANCELED(c!)"
+                        "DONE(d!)"))
 
    ;; Use logbook
    org-log-into-drawer t
@@ -143,7 +148,7 @@
      ("L" "To learn" entry (file org-learn-file)
       (file "~/.emacs.d/org/templates/learn.org"))
      ("t" "Personal todo item" entry (file org-personal-todo-file)
-      "* TODO %^{Description}%?\n  :LOGBOOK:\n  - Added: %U\n  :END:")
+      "* TODO [#%^{Priority (1 highest, 5 lowest)}] %^{Description}%?\n  :LOGBOOK:\n  - Added: %U\n  :END:")
      ("w" "Work todo item" entry (file org-work-todo-file)
       "* TODO [#%^{Priority (1 highest, 5 lowest)}] %^{Description}%?\n  :LOGBOOK:\n  - Added: %U\n  :END:")
      ("l" "Today I learnt" entry (file org-til-file)
@@ -309,11 +314,6 @@ has no effect."
   ;; (org-super-agenda-mode t)
   )
 
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((clojure . t)))
-
-
 (use-package org-roam
   :ensure t
   :custom
@@ -333,6 +333,12 @@ has no effect."
                                 ("l" "Learn something new"
                                  plain
                                  (file "~/.emacs.d/org/templates/roam/learn.org")
+                                 :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                                    "#+title: ${title}\n")
+                                 :unnarrowed t)
+                                ("j" "Jot something down"
+                                 plain
+                                 (file "~/.emacs.d/org/templates/roam/note.org")
                                  :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
                                                     "#+title: ${title}\n")
                                  :unnarrowed t)))
@@ -377,11 +383,14 @@ has no effect."
   :delight)
 
 ;; ────────────────────────────── org-babel-config ──────────────────────────────
+
 (use-package ob-clojurescript
   :custom
   (setq org-babel-clojure-backend 'cider))
 
 (use-package ob-elixir)
+
+(use-package ob-async)
 
 (org-babel-do-load-languages
  'org-babel-load-languages

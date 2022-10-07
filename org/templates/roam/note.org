@@ -1,0 +1,14 @@
+* Tags
+ %^g
+
+* References
+
+- %^{References}
+
+* Notes
+
+- $?
+
+* Tasks
+
+- [ ]
