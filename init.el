@@ -107,10 +107,6 @@
 (global-set-key (kbd "H-w") 'widen)
 (global-set-key (kbd "H-c") 'calendar)
 
-(global-set-key (kbd "M-+") 'text-scale-increase)
-(global-set-key (kbd "M--") 'text-scale-decrease)
-(global-set-key (kbd "M-0") 'text-scale-adjust)
-
 ;; Automatically update buffers if file content on the disk has changed.
 (global-auto-revert-mode t)
 
@@ -854,7 +850,15 @@
                     (lambda () (add-to-list 'company-backends 'company-anaconda)))
   :delight)
 
-
+;; ─────────────────────────── Elixir language utils ──────────────────────────
+
+(unless (package-installed-p 'alchemist)
+  (package-install 'alchemist))
+
+(add-hook 'elixir-mode-hook
+          (lambda () (add-hook 'before-save-hook 'elixir-format nil t)
+            (alchemist-mode t)))
+
 ;; ──────────────────────────────────── Look and feel ───────────────────────────────────
 (use-package monokai-alt-theme
   :doc "Just another theme"
@@ -905,6 +909,8 @@
                (:background "#9e9e9e" :foreground "#ffffff" :bold t :weight bold)))))
   :delight)
 
+;; ─────────────────────────────────── themes ───────────────────────────────────
+
 (use-package ewal-spacemacs-themes
   :ensure t
   :config
@@ -920,13 +926,6 @@
   (setq emacs-one-scale-org-headlines t)
   ;;(load-theme 'one-dark t)
   ;;(load-theme 'one-light t)
-  )
-
-(use-package moe-theme
-  :ensure t
-  :config
-  ;;(load-theme 'moe-dark t)
-  ;;(load-theme 'moe-light t)
   )
 
 (use-package darcula-theme
@@ -951,18 +950,12 @@
   ;; these hard-coded values are taken from (doom-color 'level1/2/3)
   ;; and are only relevant for darcula
   ;;(load-theme 'doom-dracula t)
-  (custom-set-faces
-   '(org-level-1 ((t (:foreground "#ff79c6" :height 1.8))))
-   '(org-level-2 ((t (:foreground "#bd93f9" :height 1.4))))
-   '(org-level-3 ((t (:foreground "#d4b8fb" :height 1.2))))
-   '(org-tag ((t (:foreground "#cfc9c2" :height 0.8)))))
 
-  (load-theme 'doom-snazzy t)
   ;;(load-theme 'doom-tomorrow-night t)
   ;;(load-theme 'doom-spacegrey t)
 
   ;;(load-theme 'doom-nord t)
-  ;;(load-theme 'doom-solarized-light t)
+
   ;;(load-theme 'doom-solarized-dark t)
   ;;(load-theme 'doom-material t)
 
@@ -971,6 +964,32 @@
 
   )
 
+(defun look/dark ()
+  "Set my current dark theme."
+  (interactive)
+  (load-theme 'doom-snazzy t)
+  (custom-set-faces
+   '(org-level-1 ((t (:foreground "#ff79c6" :height 1.8))))
+   '(org-level-2 ((t (:foreground "#bd93f9" :height 1.4))))
+   '(org-level-3 ((t (:foreground "#d4b8fb" :height 1.2))))
+   '(org-tag ((t (:foreground "#cfc9c2" :height 0.8))))))
+
+(defun look/light ()
+  "Set my current light theme."
+  (interactive)
+  (load-theme 'doom-solarized-light t)
+  (custom-set-faces
+   '(org-level-1 ((t (:foreground "#3F88AD" :height 1.8))))
+   '(org-level-2 ((t (:foreground "#d33682" :height 1.4))))
+   '(org-level-3 ((t (:foreground "#204052" :height 1.2))))
+   '(org-tag ((t (:foreground "#35a69c" :height 0.8))))))
+
+(global-set-key (kbd "C-c M-t d") 'look/dark)
+(global-set-key (kbd "C-c M-t l") 'look/light)
+
+;; ────────────────────────── default theme on startup ──────────────────────────
+
+(look/dark)
 
 (use-package powerline
   :doc "Better mode line"
@@ -989,19 +1008,6 @@
   :delight)
 
 
-(use-package hasklig-mode
-  :ensure t
-  :disabled t
-  :config
-  (set-face-attribute 'default nil
-                      :family "Hasklig"
-                      :height 160
-                      :weight 'normal
-                      :width 'normal)
-  (hasklig-mode)
-  :delight)
-
-
 (set-face-attribute 'default nil
                     :family "Fantasque Sans Mono"
                     ;;:family "JetBrains Mono"
@@ -1013,6 +1019,10 @@
                     :height 180 ;; laptop
                     :weight 'normal
                     :width 'normal)
+
+(global-set-key (kbd "M-+") 'text-scale-increase)
+(global-set-key (kbd "M--") 'text-scale-decrease)
+(global-set-key (kbd "M-0") 'text-scale-adjust)
 
 (let ((alist '((?! . "\\(?:!\\(?:==\\|[!=]\\)\\)")
                (?# . "\\(?:#\\(?:###?\\|_(\\|[!#(:=?[_{]\\)\\)")
@@ -1041,14 +1051,6 @@
     (set-char-table-range composition-function-table (car char-regexp)
                           `([,(cdr char-regexp) 0 font-shape-gstring]))))
 
-;; Elixir utils
-(unless (package-installed-p 'alchemist)
-  (package-install 'alchemist))
-
-(add-hook 'elixir-mode-hook
-          (lambda () (add-hook 'before-save-hook 'elixir-format nil t)
-            (alchemist-mode t)))
-
 (use-package ag
   :doc "Silver surfer"
   :ensure t
@@ -1065,9 +1067,7 @@
   (setq golden-ratio-adjust-factor .9
         golden-ratio-wide-adjust-factor .9))
 
-(use-package docker
-  :ensure t
-  :bind ("C-c D" . docker))
+;; ─────────────────────────────── treemacs utils ───────────────────────────────
 
 (use-package treemacs
   :ensure t
@@ -1165,6 +1165,8 @@
   :ensure t
   :config (treemacs-set-scope-type 'Perspectives))
 
+;; ───────────────────────────────── yaml utils ─────────────────────────────────
+
 (use-package yaml-mode
   :ensure t)
 
@@ -1176,6 +1178,10 @@
 
 (use-package adoc-mode
   :ensure t)
+
+(use-package docker
+  :ensure t
+  :bind ("C-c D" . docker))
 
 (use-package dockerfile-mode
   :ensure t)
