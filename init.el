@@ -289,6 +289,9 @@
   :bind ("C-x g" . magit-status)
   :delight)
 
+(use-package magit-delta
+  :hook (magit-mode . magit-delta-mode))
+
 (use-package git-gutter
   :doc "Shows modified lines"
   :ensure t
