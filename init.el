@@ -111,9 +111,14 @@
 (global-set-key (kbd "H-d") 'narrow-to-defun)
 (global-set-key (kbd "H-w") 'widen)
 (global-set-key (kbd "H-c") 'calendar)
+(global-set-key (kbd "C-0") 'delete-window)
 
 ;; Automatically update buffers if file content on the disk has changed.
 (global-auto-revert-mode t)
+
+(save-place-mode 1)
+
+(setenv "SHELL" "/opt/homebrew/bin/zsh")
 
 
 ;; ─────────────────────────── Disable unnecessary UI elements ──────────────────────────
