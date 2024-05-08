@@ -495,12 +495,17 @@
   :if (eq system-type 'darwin)
   :config
   (when (memq window-system '(mac ns))
+    (setq exec-path-from-shell-shell-name "/opt/homebrew/bin/zsh")
     (exec-path-from-shell-initialize)
     (exec-path-from-shell-copy-envs
      '("PATH" "ANDROID_HOME" "LEIN_USERNAME" "LEIN_PASSPHRASE"
        "LEIN_JVM_OPTS" "NPM_TOKEN" "LANGUAGE" "LANG" "LC_ALL"
-       "MOBY_ENV" "JAVA_8_HOME" "JAVA_7_HOME" "JAVA_HOME" "PS1"
-       "NVM_DIR" "GPG_TTY")))
+       "MOBY_ENV" "JAVA_8_HOME" "JAVA_7_HOME" "JAVA_HOME"
+       "NVM_DIR" "GPG_TTY" "SDKMAN_DIR"))
+    ;; WARN: artis folio specific
+    (exec-path-from-shell-copy-envs
+     '("CLIENT_ID" "CLIENT_SECRET" "TEST_CLIENT_ID" "TEST_CLIENT_SECRET")))
+
   :delight)
 
 (use-package diminish
