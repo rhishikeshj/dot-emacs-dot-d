@@ -642,6 +642,14 @@
          ("M-p" . highlight-symbol-prev))
   :delight)
 
+(use-package highlight-sexp
+  :load-path "elpa/"
+  :disabled t
+  :config
+  (add-hook 'lisp-mode-hook 'highlight-sexp-mode)
+  (add-hook 'emacs-lisp-mode-hook #'highlight-sexp-mode)
+  (add-hook 'clojure-mode-hook #'highlight-sexp-mode))
+
 (use-package yasnippet
   :ensure t
   :config
