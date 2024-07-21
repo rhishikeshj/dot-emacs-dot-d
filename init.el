@@ -53,10 +53,12 @@
  fill-column 80
 
  ;; Use your name in the frame title. :)
- frame-title-format (format "%s's Emacs" (if (or (equal user-login-name "suvratapte")
-                                                 (equal user-login-name "suvrat.apte"))
-                                             "Suvrat"
-                                           (capitalize user-login-name)))
+ frame-title-format '("%b%&")
+ ;; (list "%b (" user-login-name "@" system-name ")")
+ ;; (format "%s's Emacs" (if (or (equal user-login-name "suvratapte")
+                    ;;                              (equal user-login-name "suvrat.apte"))
+                    ;;                          "Suvrat"
+                    ;;                        (capitalize user-login-name)))
 
  ;; Do not create lockfiles.
  create-lockfiles nil
@@ -280,6 +282,34 @@
   :config
   ;; Use it everywhere
   (projectile-mode t)
+  ;; default value is 'alien but then global ignores dont work
+  ;; but with native, it uses find or fd to list files
+  ;; find does not take gitignores into account
+  ;; fd does not seem to work either
+  ;; going back to defaulting for now
+  (setq projectile-indexing-method 'alien)
+  (setq projectile-project-search-path '("~/workspace/notes/"))
+  ;; (setq projectile-globally-ignored-directories '("^\\.clj-kondo$"
+  ;;                                                 "^\\.lsp$"
+  ;;                                                 ;; these are defaults
+  ;;                                                 "^\\.idea$"
+  ;;                                                 "^\\.vscode$"
+  ;;                                                 "^\\.ensime_cache$"
+  ;;                                                 "^\\.eunit$"
+  ;;                                                 "^\\.git$"
+  ;;                                                 "^\\.hg$"
+  ;;                                                 "^\\.fslckout$"
+  ;;                                                 "^_FOSSIL_$"
+  ;;                                                 "^\\.bzr$"
+  ;;                                                 "^_darcs$"
+  ;;                                                 "^\\.pijul$"
+  ;;                                                 "^\\.tox$"
+  ;;                                                 "^\\.svn$"
+  ;;                                                 "^\\.stack-work$"
+  ;;                                                 "^\\.ccls-cache$"
+  ;;                                                 "^\\.cache$"
+  ;;                                                 "^\\.clangd$"))
+
   :bind ("C-x f" . projectile-find-file)
   :delight)
 
@@ -528,7 +558,7 @@
   :doc "Focused editing."
   :ensure t
   :config
-  (setq darkroom-text-scale-increase 1.5)
+  (setq darkroom-text-scale-increase 1.3)
   :bind ("C-c d" . darkroom-mode)
   :delight)
 
@@ -604,25 +634,95 @@
 
   :delight)
 
-(use-package paredit
-  :doc "Better handling of paranthesis when writing Lisp"
+;; ─────────────────────── smartparens to replace paredit ───────────────────────
+
+;; taken from https://ebzzry.com/en/emacs-pairs/
+;; DOES NOT WORK YET
+(defmacro def-pairs (pairs)
+  "Define functions for pairing. PAIRS is an alist of (NAME . STRING)
+conses, where NAME is the function name that will be created and
+STRING is a single-character string that marks the opening character.
+
+  (def-pairs ((paren . \"(\")
+              (bracket . \"[\"))
+
+defines the functions WRAP-WITH-PAREN and WRAP-WITH-BRACKET,
+respectively."
+  `(progn
+     ,@(cl-loop for (key . val) in pairs
+             collect
+             `(defun ,(read (concat
+                             "wrap-with-"
+                             (prin1-to-string key)
+                             "s"))
+                  (&optional arg)
+                (interactive "p")
+                (sp-wrap-with-pair ,val)))))
+
+(def-pairs ((paren . "(")
+            (bracket . "[")
+            (brace . "{")
+            (single-quote . "'")
+            (double-quote . "\"")
+            (back-quote . "`")))
+
+(use-package smartparens
+  :doc "Smartparens is a minor mode for dealing with pairs in Emacs."
   :ensure t
   :init
-  (add-hook 'clojure-mode-hook #'enable-paredit-mode)
-  (add-hook 'cider-repl-mode-hook #'enable-paredit-mode)
-  (add-hook 'emacs-lisp-mode-hook #'enable-paredit-mode)
-  (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-  (add-hook 'ielm-mode-hook #'enable-paredit-mode)
-  (add-hook 'lisp-mode-hook #'enable-paredit-mode)
-  (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
-  (add-hook 'scheme-mode-hook #'enable-paredit-mode)
-  (add-hook 'haskell-mode-hook #'enable-paredit-mode)
-  (add-hook 'haskell-interactive-mode-hook #'enable-paredit-mode)
+  ;; (add-hook 'clojure-mode-hook #'smartparens-strict-mode)
+  ;; (add-hook 'cider-repl-mode-hook #'smartparens-strict-mode)
+  ;; (add-hook 'emacs-lisp-mode-hook #'smartparens-strict-mode)
+  ;; (add-hook 'eval-expression-minibuffer-setup-hook #'smartparens-strict-mode)
+  ;; (add-hook 'ielm-mode-hook #'smartparens-strict-mode)
+  ;; (add-hook 'lisp-mode-hook #'smartparens-strict-mode)
+  ;; (add-hook 'lisp-interaction-mode-hook #'smartparens-strict-mode)
+  ;; (add-hook 'scheme-mode-hook #'smartparens-strict-mode)
+  ;; (add-hook 'haskell-mode-hook #'smartparens-strict-mode)
+  ;; (add-hook 'haskell-interactive-mode-hook #'smartparens-strict-mode)
   :config
-  (show-paren-mode t)
-  :bind (("M-[" . paredit-wrap-square)
-         ("M-{" . paredit-wrap-curly))
+  ;;(require 'smartparens-config)
+  :bind (:map smartparens-mode-map
+              ("M-<up>" . sp-backward-unwrap-sexp)
+              ("M-<down>" . sp-unwrap-sexp)
+              ("C-M-<right>" . sp-forward-slurp-sexp)
+              ("C-M-<left> " . sp-backward-slurp-sexp)
+              ("M-(" . wrap-with-parens)
+              ("M-[" . wrap-with-brackets)
+              ("M-{" . wrap-with-braces)
+              )
   :delight)
+
+(use-package smartparens-config
+  :ensure smartparens
+  :init
+  (add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
+  (add-hook 'cider-repl-mode-hook 'turn-on-smartparens-strict-mode)
+  (add-hook 'eval-expression-minibuffer-setup-hook 'turn-on-smartparens-strict-mode)
+  :config (progn (show-smartparens-global-mode t)))
+
+;; (use-package paredit
+;;   :doc "Better handling of paranthesis when writing Lisp"
+;;   :disabled t
+;;   :ensure t
+;;   :init
+;;   (add-hook 'clojure-mode-hook #'enable-paredit-mode)
+;;   (add-hook 'cider-repl-mode-hook #'enable-paredit-mode)
+;;   (add-hook 'emacs-lisp-mode-hook #'enable-paredit-mode)
+;;   (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+;;   (add-hook 'ielm-mode-hook #'enable-paredit-mode)
+;;   (add-hook 'lisp-mode-hook #'enable-paredit-mode)
+;;   (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+;;   (add-hook 'scheme-mode-hook #'enable-paredit-mode)
+;;   (add-hook 'haskell-mode-hook #'enable-paredit-mode)
+;;   (add-hook 'haskell-interactive-mode-hook #'enable-paredit-mode)
+;;   :config
+;;   (show-paren-mode t)
+;;   :bind (("M-[" . paredit-wrap-square)
+;;          ("M-{" . paredit-wrap-curly))
+;;   :delight)
+
+;; ────────────────────────────── replace paredit ─────────────────────────────
 
 (use-package rainbow-delimiters
   :doc "Colorful paranthesis matching"
@@ -690,7 +790,7 @@
                       nil))))))
   (add-hook 'clojure-mode-hook 'prettify-fns)
   (add-hook 'cider-repl-mode-hook 'prettify-fns)
-  (add-hook 'clojure-mode-hook #'cljstyle-mode)
+  ;;(add-hook 'clojure-mode-hook #'cljstyle-mode)
 
   ;; Show lambda instead of '#' in '#(...)'
   (defun prettify-anonymous-fns ()
@@ -710,6 +810,7 @@
                                       "∈")
                       nil))))))
   (add-hook 'clojure-mode-hook 'prettify-sets)
+  (add-hook 'before-save-hook 'lsp-clojure-clean-ns)
   (add-hook 'cider-repl-mode-hook 'prettify-sets)
   :delight)
 
@@ -721,6 +822,7 @@
 (use-package cider
   :doc "Integration with a Clojure REPL cider"
   :ensure t
+  :pin melpa-stable
 
   :init
   ;; Enable minibuffer documentation
@@ -756,32 +858,48 @@
 
   (setq cider-repl-prompt-function 'cider-repl-prompt-custom)
 
+  (setq cider-known-endpoints
+        '(("folio-api" "localhost" "6969")))
+
+  ;;(setq cider-enrich-classpath t)
+
   :bind (:map
          cider-mode-map
          ("H-t" . cider-test-run-test)
          ("H-n" . cider-test-run-ns-tests)
+         ("C-c M-p" . cider-tap-sexp-at-point)
          :map
          cider-repl-mode-map
-         ("C-c M-o" . cider-repl-clear-buffer))
+         ("C-c M-o" . cider-repl-clear-buffer)
+         ("M-RET" . cider-repl-return))
   :delight)
-
 
 (use-package lsp-mode
   :ensure t
   :hook ((clojure-mode . lsp)
          (clojurec-mode . lsp)
-         (clojurescript-mode . lsp))
+         (clojurescript-mode . lsp)
+         (elixir-mode . lsp)
+         (go-mode . lsp)
+         (rust-mode . lsp)
+         (typescript-mode . lsp))
   :config
   ;; add paths to your local installation of project mgmt tools, like lein
+  (add-hook 'before-save-hook 'lsp-format-buffer)
   (setenv "PATH" (concat
-                   "/Users/rhishikeshj/workspace/tools/bin/" path-separator
-                   (getenv "PATH")))
+                  "/Users/rhishikeshj/workspace/tools/bin/" path-separator
+                  (getenv "PATH")))
   (dolist (m '(clojure-mode
                clojurec-mode
                clojurescript-mode
                clojurex-mode))
-     (add-to-list 'lsp-language-id-configuration `(,m . "clojure")))
-  (setq lsp-clojure-server-command '("/opt/homebrew/bin/clojure-lsp")))
+    (add-to-list 'lsp-language-id-configuration `(,m . "clojure")))
+  (setq lsp-clojure-server-command '("/opt/homebrew/bin/clojure-lsp"))
+
+  (setq lsp-typescript-format-enable 'f)
+
+  :init
+  (add-to-list 'exec-path "~/.emacs.d/elpa/elixir-ls-v0.16.0/"))
 
 
 (use-package flycheck
@@ -876,6 +994,10 @@
                     (lambda () (add-to-list 'company-backends 'company-anaconda)))
   :delight)
 
+(use-package elm-mode
+  :ensure t
+  :delight)
+
 ;; ─────────────────────────── Elixir language utils ──────────────────────────
 
 (unless (package-installed-p 'alchemist)
@@ -884,6 +1006,19 @@
 (add-hook 'elixir-mode-hook
           (lambda () (add-hook 'before-save-hook 'elixir-format nil t)
             (alchemist-mode t)))
+
+(use-package erlang
+  :ensure t
+  :delight)
+
+;; ──────────────────────────────── Golang utils ────────────────────────────────
+
+(add-hook 'go-mode
+          (lambda () (add-hook 'before-save-hook 'gofmt nil t)))
+
+(use-package jsonnet-mode
+  :ensure t
+  :delight)
 
 ;; ──────────────────────────────────── Look and feel ───────────────────────────────────
 (use-package monokai-alt-theme
@@ -960,10 +1095,15 @@
   ;;(load-theme 'darcula t)
   )
 
+(use-package gruvbox-theme
+  :ensure t
+  :config
+  ;;(load-theme 'gruvbox-dark-hard t)
+  )
+
 (use-package ewal-doom-themes
   :ensure t
   :config
-
   ;; these hard-coded values are taken from the tokyo theme
   ;; and are only relevant for tokyo-night
   ;; (load-theme 'doom-tokyo-night t)
@@ -972,54 +1112,57 @@
   ;;  '(org-level-2 ((t (:foreground "#b4f9f8" :height 1.4))))
   ;;  '(org-level-3 ((t (:foreground "#9ece6a" :height 1.2))))
   ;;  '(org-tag ((t (:foreground "#cfc9c2" :height 0.8)))))
-
-  ;; these hard-coded values are taken from (doom-color 'level1/2/3)
-  ;; and are only relevant for darcula
-  ;;(load-theme 'doom-dracula t)
-
-  ;;(load-theme 'doom-tomorrow-night t)
-  ;;(load-theme 'doom-spacegrey t)
-
-  ;;(load-theme 'doom-nord t)
-
-  ;;(load-theme 'doom-solarized-dark t)
-  ;;(load-theme 'doom-material t)
-
-  ;;(load-theme 'doom-vibrant)
-  ;;(load-theme 'doom-one t)
-
+  
   )
+
 
 (defun look/dark ()
   "Set my current dark theme."
   (interactive)
+  ;; (load-theme 'one-dark t)
+  ;; (load-theme 'gruvbox-dark-hard t)
   (load-theme 'doom-snazzy t)
+  ;; (load-theme 'doom-nord-aurora t)
+  ;; or 'latte, 'frappe, 'macchiato, or 'mocha
+  ;; (setq catppuccin-flavor 'mocha)
+  ;; (load-theme 'catppuccin t)
+  ;; (catppuccin-reload)
   (custom-set-faces
-   '(org-level-1 ((t (:foreground "#ff79c6" :height 1.8))))
-   '(org-level-2 ((t (:foreground "#bd93f9" :height 1.4))))
-   '(org-level-3 ((t (:foreground "#d4b8fb" :height 1.2))))
-   '(org-tag ((t (:foreground "#cfc9c2" :height 0.8))))))
+   '(org-level-1 ((t (:foreground "#9aa5ce" :height 1.8))))
+   '(org-level-2 ((t (:foreground "#b4f9f8" :height 1.4))))
+   '(org-level-3 ((t (:foreground "#9ece6a" :height 1.2))))
+   '(org-tag ((t (:foreground "#cfc9c2" :height 0.8)))))
+  )
 
 (defun look/light ()
   "Set my current light theme."
   (interactive)
   (load-theme 'doom-solarized-light t)
+  ;; (load-theme 'gruvbox-light-medium t)
   (custom-set-faces
    '(org-level-1 ((t (:foreground "#3F88AD" :height 1.8))))
    '(org-level-2 ((t (:foreground "#d33682" :height 1.4))))
    '(org-level-3 ((t (:foreground "#204052" :height 1.2))))
-   '(org-tag ((t (:foreground "#35a69c" :height 0.8))))))
+   '(org-tag ((t (:foreground "#35a69c" :height 0.8)))))
+  )
 
 (global-set-key (kbd "C-c M-t d") 'look/dark)
 (global-set-key (kbd "C-c M-t l") 'look/light)
 
+(use-package solo-jazz-theme
+  :ensure t
+  :config
+  )
+
 ;; ────────────────────────── default theme on startup ──────────────────────────
 
 (look/dark)
+;; (look/light)
+
+;; ──────────────────────────────────────────────────────────────────────────────
 
 (use-package powerline
   :doc "Better mode line"
-  :disabled t
   :ensure t
   :config
   (powerline-center-theme)
@@ -1033,22 +1176,40 @@
   (add-hook 'after-init-hook #'global-emojify-mode)
   :delight)
 
-
 (set-face-attribute 'default nil
-                    :family "Fantasque Sans Mono"
-                    ;;:family "JetBrains Mono"
-                    ;;:family "Fira Code"
-                    ;;:family "Ubuntu Mono"
-                    ;;:family "Hasklig"
+                    ;; :family "Fantasque Sans Mono"
+                    :family "FantasqueSansM Nerd Font"
+                    ;; :family "JetBrains Mono"
+                    ;; :family "Fira Code"
+                    ;; :family "Ubuntu Mono"
+                    ;; :family "Hasklig"
 
-                    ;;:height 200 ;; monitor
-                    :height 180 ;; laptop
+                    ;;:height 170 ;; monitor
+                    :height 150 ;; laptop
                     :weight 'normal
                     :width 'normal)
 
+(defun font-monitor ()
+  (interactive)
+  (set-face-attribute 'default nil
+                      :family "FantasqueSansM Nerd Font"
+                      :height 170 ;; monitor
+                      :weight 'normal
+                      :width 'normal))
+
+(defun font-laptop ()
+  (interactive)
+  (set-face-attribute 'default nil
+                      :family "FantasqueSansM Nerd Font"
+                      :height 150
+                      :weight 'normal
+                      :width 'normal))
+
+(global-set-key (kbd "M-+") 'text-scale-increase)
 (global-set-key (kbd "M-+") 'text-scale-increase)
 (global-set-key (kbd "M--") 'text-scale-decrease)
-(global-set-key (kbd "M-0") 'text-scale-adjust)
+(global-set-key (kbd "<f2>") 'font-monitor)
+(global-set-key (kbd "<f1>") 'font-laptop)
 
 (let ((alist '((?! . "\\(?:!\\(?:==\\|[!=]\\)\\)")
                (?# . "\\(?:#\\(?:###?\\|_(\\|[!#(:=?[_{]\\)\\)")
@@ -1091,7 +1252,8 @@
   :config
   (golden-ratio-mode 1)
   (setq golden-ratio-adjust-factor .9
-        golden-ratio-wide-adjust-factor .9))
+        golden-ratio-wide-adjust-factor .9)
+  :delight)
 
 ;; ─────────────────────────────── treemacs utils ───────────────────────────────
 
@@ -1191,6 +1353,10 @@
   :ensure t
   :config (treemacs-set-scope-type 'Perspectives))
 
+(use-package lsp-treemacs
+  :after (lsp-mode)
+  :ensure t)
+
 ;; ───────────────────────────────── yaml utils ─────────────────────────────────
 
 (use-package yaml-mode
@@ -1212,6 +1378,12 @@
 (use-package dockerfile-mode
   :ensure t)
 
+(use-package terraform-mode
+  :ensure t)
+
+(use-package restclient
+  :ensure t)
+
 (use-package browse-kill-ring
   :ensure t
   :bind
@@ -1220,11 +1392,177 @@
 
 (load-file "~/.emacs.d/load-env-vars.el")
 
-(setq initial-buffer-choice "~/workspace/notes/personal/journal.org")
+(setq initial-buffer-choice "~/workspace/notes/work/juxt/journal.org")
 
 ;; ------------------------------------ ORG ------------------------------------
 
 (load-file "~/.emacs.d/org-config.el")
+
+;; ──────────────────────────────── Portal setup ────────────────────────────────
+;; Leverage an existing cider nrepl connection to evaluate portal.api functions
+;; and map them to convenient key bindings.
+
+;; def portal to the dev namespace to allow dereferencing via @dev/portal
+;; (defun portal.api/open ()
+;;   (interactive)
+;;   (cider-nrepl-sync-request:eval
+;;     "(do (ns dev) (def portal ((requiring-resolve 'portal.api/open))) (add-tap (requiring-resolve 'portal.api/submit)))"))
+
+;; (defun portal.api/clear ()
+;;   (interactive)
+;;   (cider-nrepl-sync-request:eval "(portal.api/clear)"))
+
+;; (defun portal.api/close ()
+;;   (interactive)
+;;   (cider-nrepl-sync-request:eval "(portal.api/close)"))
+
+;; Example key mappings for doom emacs
+;; (map! :map clojure-mode-map
+;;       ;; cmd  + o
+;;       :n "s-o" #'portal.api/open
+;;       ;; ctrl + l
+;;       :n "C-l" #'portal.api/clear)
+
+;; NOTE: You do need to have portal on the class path and the easiest way I know
+;; how is via a clj user or project alias.
+;;(setq cider-clojure-cli-global-options "-A:portal")
+
+;; ────────────────────────────────── /Portal ─────────────────────────────────
+
+;; ──────────────────────────── Clojure Clerk setup ───────────────────────────
+
+(defun clerk-show ()
+  (interactive)
+  (when-let
+      ((filename
+        (buffer-file-name)))
+    (save-buffer)
+    (cider-interactive-eval
+     (concat "(nextjournal.clerk/show! \"" filename "\")"))))
+
+(define-key clojure-mode-map (kbd "<M-return>") 'clerk-show)
+
+;; ──────────────────────────── /Clojure Clerk setup ────────────────────────────
+
+(use-package all-the-icons
+  :if (display-graphic-p))
+
+(use-package all-the-icons-dired)
+(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+
+(use-package dired
+  :ensure nil
+  :custom ((dired-listing-switches "-al")
+           (delete-by-moving-to-trash t)))
+
+;; ───────────────────────── Evil mode, still learning ────────────────────────
+
+(use-package evil-surround
+  :ensure t
+  :config
+  (global-evil-surround-mode 1))
+
+
+;; ──────────────────────────────── experiments ───────────────────────────────
+
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook))
+
+(use-package dap-mode
+  :ensure t)
+
+(use-package go-dlv
+  :ensure t)
+
+;;(require 'dap-dlv-go)
+
+(use-package undo-tree
+  :ensure t
+  :delight
+  :config
+  (global-undo-tree-mode)
+  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/.cache"))))
+
+(use-package git-timemachine
+  :ensure t
+  :delight
+  :bind ("C-x t" . git-timemachine))
+
+(defun run-public-function-at-point ()
+  (interactive)
+  (let ((f (cadr (clojure-find-def))))
+    (message "Running function: %s" f)
+    (cider-insert-in-repl (format "(in-ns '%s)" (cider-current-ns t)) t)
+    (cider-insert-in-repl (format "(%s)" f) t)))
+
+(defun lein-clean ()
+  (interactive)
+  (shell-command (format "cd %s && lein clean" (vc-root-dir))))
+
+(use-package ledger-mode
+  :ensure t)
+
+(use-package company-ledger
+  :ensure t)
+
+(use-package graphql-mode
+  :ensure t)
+
+(use-package json-mode
+  :ensure t)
+
+(use-package request
+  :ensure t)
+
+(use-package centaur-tabs
+  :demand
+  :config
+  ;;(centaur-tabs-mode t)
+  (setq centaur-tabs-style "alternate")
+  (setq centaur-tabs-set-icons t)
+  :bind
+  ("C-<prior>" . centaur-tabs-backward)
+  ("C-<next>" . centaur-tabs-forward))
+
+(use-package flycheck-rust
+  :ensure t)
+
+(use-package rust-mode
+  :ensure t
+  ;; :custom
+  ;; ;; what to use when checking on-save. "check" is default, I prefer clippy
+  ;; (lsp-rust-analyzer-cargo-watch-command "clippy")
+  ;; (lsp-eldoc-render-all t)
+  ;; (lsp-idle-delay 0.6)
+  ;; ;; enable / disable the hints as you prefer:
+  ;; (lsp-inlay-hint-enable t)
+  ;; ;; These are optional configurations. See https://emacs-lsp.github.io/lsp-mode/page/lsp-rust-analyzer/#lsp-rust-analyzer-display-chaining-hints for a full list
+  ;; (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+  ;; (lsp-rust-analyzer-display-chaining-hints t)
+  ;; (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil)
+  ;; (lsp-rust-analyzer-display-closure-return-type-hints t)
+  ;; (lsp-rust-analyzer-display-parameter-hints nil)
+  ;; (lsp-rust-analyzer-display-reborrow-hints nil)
+  :config
+  (add-hook 'rust-mode-hook
+            (lambda () (setq indent-tabs-mode nil)))
+  (add-hook 'rust-mode-hook
+            (lambda () (prettify-symbols-mode)))
+  (add-hook 'rust-mode-hook #'flycheck-rust-setup)
+  (setq rust-format-on-save t)
+  (setq lsp-inlay-hint-enable t)
+  (require 'dap-cpptools))
+
+(use-package cargo
+  :ensure t
+  :hook
+  (add-hook 'rust-mode-hook #'cargo-minor-mode))
+
+(use-package hl-todo
+  :config
+  (global-hl-todo-mode 1))
 
 (provide 'init)
 

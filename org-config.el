@@ -44,6 +44,7 @@
    org-todo-keywords '((sequence
                         "TODO(t)"
                         "WORKING(w!)"
+                        "IN-REVIEW(r)"
                         "PAUSED(p!)"
                         "WAITING(W!)"
                         "|"
@@ -90,7 +91,7 @@
      ("WAITING" :foreground "#ebcb8b" :weight bold)
      ("DONE" :foreground "#a3be8c" :weight bold))
 
-   org-todo-keyword-faces org-todo-keyword-faces-nord-theme
+   org-todo-keyword-faces org-todo-keyword-faces-spacemacs-theme
 
    org-enforce-todo-dependencies t
    org-enforce-todo-checkbox-dependencies t
@@ -123,38 +124,62 @@
    org-directory "~/workspace/notes"
    org-personal-directory (concat org-directory "/personal")
    org-work-directory (concat org-directory "/work/juxt")
-
+   org-saas0-work-directory (concat org-directory "/work/saas0")
    org-capture-templates-directory "~/.emacs.d/org/templates/"
 
    ;; Capture files
    org-reading-list-file (concat org-personal-directory "/reading-list.org")
    org-oncall-file (concat org-work-directory "/oncall.org")
    org-daily-journal-file (concat org-work-directory "/journal.org")
+   org-significants-file (concat org-work-directory "/significants.org")
+   org-saas0-daily-journal-file (concat org-saas0-work-directory "/journal.org")
    org-meeting-notes-file (concat org-work-directory "/meeting-notes.org")
+   org-saas0-meeting-notes-file (concat org-saas0-work-directory "/meeting-notes.org")
    org-personal-todo-file (concat org-personal-directory "/todo.org")
    org-work-todo-file (concat org-work-directory "/todo.org")
+   org-saas0-work-todo-file (concat org-saas0-work-directory "/todo.org")
    org-til-file (concat org-personal-directory "/til.org")
+   org-clj-til-file (concat org-personal-directory "/til-clojure.org")
+   org-ex-til-file (concat org-personal-directory "/til-elixir.org")
    org-learn-file (concat org-personal-directory "/learn.org")
    org-facts-file (concat org-personal-directory "/facts.org")
 
    org-capture-templates
    '(("r" "Reading list item" entry (file org-reading-list-file)
       "* TODO %^{Description}\n  :LOGBOOK:\n  - Added: %U\n  :END:\n  %?")
-     ("m" "Meeting notes" entry (file org-meeting-notes-file)
+     ("m" "Meeting notes")
+     ("mj" "Meeting notes" entry (file org-meeting-notes-file)
       "* %^{Title}\n  - Attendees: %^{Attendees}
   - Date: %U\n  - Notes:\n    + %?\n  - Action items [/]\n    + [ ] ")
-     ("d" "Daily Entry" entry (file org-daily-journal-file)
+     ("ms" "Meeting notes" entry (file org-saas0-meeting-notes-file)
+      "* %^{Title}\n  - Attendees: %^{Attendees}
+  - Date: %U\n  - Notes:\n    + %?\n  - Action items [/]\n    + [ ] ")
+     ("d" "Daily journal entries")
+     ("dj" "Juxt Daily Entry" entry (file org-daily-journal-file)
+      (file "~/.emacs.d/org/templates/daily-entry.org") :prepend t)
+     ("ds" "SaaS0 Daily Entry" entry (file org-saas0-daily-journal-file)
       (file "~/.emacs.d/org/templates/daily-entry.org") :prepend t)
      ("L" "To learn" entry (file org-learn-file)
       (file "~/.emacs.d/org/templates/learn.org"))
-     ("t" "Personal todo item" entry (file org-personal-todo-file)
+     ("t" "TODO")
+     ("tp" "Personal todo item" entry (file org-personal-todo-file)
       "* TODO [#%^{Priority (1 highest, 5 lowest)}] %^{Description}%?\n  :LOGBOOK:\n  - Added: %U\n  :END:")
-     ("w" "Work todo item" entry (file org-work-todo-file)
+     ("tw" "Work TODO")
+     ("twj" "Work todo item[Juxt]" entry (file org-work-todo-file)
       "* TODO [#%^{Priority (1 highest, 5 lowest)}] %^{Description}%?\n  :LOGBOOK:\n  - Added: %U\n  :END:")
-     ("l" "Today I learnt" entry (file org-til-file)
+     ("tws" "Work todo item[Saas0]" entry (file org-saas0-work-todo-file)
+      "* TODO [#%^{Priority (1 highest, 5 lowest)}] %^{Description}%?\n  :LOGBOOK:\n  - Added: %U\n  :END:")
+     ("l" "Today I learnt")
+     ("lc" "clj: Today I learnt" entry (file org-clj-til-file)
+      "* %^{Description}\n  - Source: %?\n  -")
+     ("le" "elixir: Today I learnt" entry (file org-ex-til-file)
+      "* %^{Description}\n  - Source: %?\n  -")
+     ("ll" "Today I learnt" entry (file org-til-file)
       "* %^{Description}\n  - Source: %?\n  -")
      ("f" "Facts" entry (file org-facts-file)
-      "* %^{Fact}\n"))
+      "* %^{Fact}\n")
+     ("s" "Significants" entry (file org-significants-file)
+      (file "~/.emacs.d/org/templates/significants.org") :prepend t))
 
    org-agenda-files (list org-personal-todo-file
                           org-learn-file
@@ -277,7 +302,8 @@ has no effect."
          ("C-M-g" . org-move-item-or-tree)
          ("H-i" . org-clock-in)
          ("H-o" . org-clock-out)
-         ("H-p" . org-set-property))
+         ("H-p" . org-set-property)
+         ("C-c M-i" . org-id-store-link))
   :delight)
 
 
@@ -398,6 +424,15 @@ has no effect."
    (elixir . t)
    (clojure . t)
    (shell . t)))
+
+(defun org-syntax-table-modify ()
+  "Modify `org-mode-syntax-table' for the current org buffer."
+  (modify-syntax-entry ?< "." org-mode-syntax-table)
+  (modify-syntax-entry ?> "." org-mode-syntax-table))
+
+(add-hook 'org-mode-hook #'org-syntax-table-modify)
+
+(use-package org-beautify-theme)
 
 ;; ───────────────────────────── /org-babel-config ────────────────────────────
 
