@@ -771,7 +771,7 @@ respectively."
 
 ;; ──────────────────────────────── Programming languages ───────────────────────────────
 
-(load-file "~/.emacs.d/elpa/cljstyle-mode.el")
+(load-file "~/.emacs.d/cljstyle-mode.el")
 
 (use-package clojure-mode
   :doc "A major mode for editing Clojure code"
